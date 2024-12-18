@@ -1,0 +1,50 @@
+# Build output
+**/bin/**
+**/obj/**
+
+# Visual Studio temporary/generated files
+*.suo
+*.user
+*.vspscc
+*.vssscc
+.vssscc
+*.scc
+_ReSharper.*
+*.[a-z]proj.user
+
+# User-specific files
+*.vshost.exe
+.vs
+*.dbmdl
+*.local
+*.opendb
+*.pfx
+*.publishsettings
+*.user
+
+# Generated files
+*.user
+*.config
+*.designer.cs
+*.g.cs
+*.generated.cs
+*.resx
+
+# NuGet Package Manager
+**/.nuget/**
+
+# Editor preferences
+*.suo
+*.userprefs
+*.user
+*.csproj.user
+
+# Local History
+.localhistory
+
+# IDE-Specific
+.vscode/
+.vs/
+
+# Temporary files
+*~
