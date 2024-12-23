@@ -66,6 +66,19 @@ namespace api.Repository
                 stocks = stocks.Where(x => x.Purchase == queryStock.Purchase);
             }
 
+            if (!string.IsNullOrWhiteSpace(queryStock.SortBy))
+            {
+                bool isDescending = queryStock.SortBy.StartsWith('-');
+                string propertyName = isDescending ? queryStock.SortBy.Substring(1) : queryStock.SortBy;
+
+                var property = typeof(Stock).GetProperty(propertyName);
+
+                if (property != null)
+                {
+                    stocks = isDescending ? stocks.OrderByDescending(x => EF.Property<object>(x, propertyName)) : stocks.OrderBy(x => EF.Property<object>(x, propertyName));
+                }
+            }
+
             return await stocks.ToListAsync();
         }
 

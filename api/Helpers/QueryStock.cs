@@ -13,5 +13,6 @@ namespace api.Helpers
         public decimal LastDiv { get; set; }
         public string IndustryCode { get; set; } = string.Empty;
         public long MarketCap { get; set; }
+        public string SortBy { get; set; } = string.Empty;
     }
 }
