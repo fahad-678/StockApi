@@ -2,6 +2,9 @@
 **/bin/**
 **/obj/**
 
+#App Settings
+appsettings.*.json
+
 # Visual Studio temporary/generated files
 *.suo
 *.user
