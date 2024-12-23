@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Stock;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -36,9 +37,36 @@ namespace api.Repository
             return stock;
         }
 
-        public async Task<List<Stock>> GetAllAsync()
+        public async Task<List<Stock>> GetAllAsync(QueryStock queryStock)
         {
-            return await _context.Stocks.Include(c => c.Comments).ToListAsync();
+            var stocks = _context.Stocks.Include(c => c.Comments).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(queryStock.Symbol))
+            {
+                stocks = stocks.Where(x => x.Symbol.ToLower().Contains(queryStock.Symbol.ToLower()));
+            }
+            if (!string.IsNullOrWhiteSpace(queryStock.CompanyName))
+            {
+                stocks = stocks.Where(x => x.CompanyName.ToLower().Contains(queryStock.CompanyName.ToLower()));
+            }
+            if (!string.IsNullOrWhiteSpace(queryStock.IndustryCode))
+            {
+                stocks = stocks.Where(x => x.IndustryCode.ToLower().Contains(queryStock.IndustryCode.ToLower()));
+            }
+            if (queryStock.MarketCap > 0)
+            {
+                stocks = stocks.Where(x => x.MarketCap == queryStock.MarketCap);
+            }
+            if (queryStock.LastDiv > 0)
+            {
+                stocks = stocks.Where(x => x.LastDiv == queryStock.LastDiv);
+            }
+            if (queryStock.Purchase > 0)
+            {
+                stocks = stocks.Where(x => x.Purchase == queryStock.Purchase);
+            }
+
+            return await stocks.ToListAsync();
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
