@@ -8,6 +8,7 @@ using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -16,11 +17,25 @@ namespace api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _tokenService = tokenService;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.UserName);
+            if (user == null) return Unauthorized("Invalid username or Password");
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if (!result.Succeeded) return Unauthorized("Invalid username or Password");
+
+            return Ok(user.toUserSignInDto(_tokenService.CreateToken(user)));
         }
 
         [HttpPost("register")]
