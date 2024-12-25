@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Dtos.Account;
+using api.Interfaces;
+using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +16,11 @@ namespace api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        public AccountController(UserManager<AppUser> userManager)
+        private readonly ITokenService _tokenService;
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
         {
             _userManager = userManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -44,7 +48,7 @@ namespace api.Controllers
                 return StatusCode(500, new { Errors = errors });
             };
 
-            return CreatedAtAction(nameof(Register), new { id = appUser.Id }, "User created successfully");
+            return CreatedAtAction(nameof(Register), new { id = appUser.Id }, appUser.toUserSignInDto(_tokenService.CreateToken(appUser)));
 
         }
     }
